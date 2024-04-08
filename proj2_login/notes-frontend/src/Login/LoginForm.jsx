@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 
 function LoginForm(login, passwd, returnLogin, returnPasswd) {
   //const [login, setLogin] = useState('');
@@ -8,7 +8,7 @@ function LoginForm(login, passwd, returnLogin, returnPasswd) {
     e.preventDefault();
     if (!login || !passwd) return;
     //loginUser({ username, password });
-    console.log(login + " "+ passwd);
+    console.log(login+ " "+ passwd);
   };
 
   return (
