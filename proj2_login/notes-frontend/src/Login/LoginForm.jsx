@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 
-function LoginForm({ addUser }) {
-  const [login, setLogin] = useState('');
-  const [passwd, setPasswd] = useState('');
+function LoginForm(login, passwd, returnLogin, returnPasswd) {
+  //const [login, setLogin] = useState('');
+  //const [passwd, setPasswd] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !password) return;
-    loginUser({ username, password });
-    getLogin('');
-    getPasswd('');
+    if (!login || !passwd) return;
+    //loginUser({ username, password });
+    console.log(login + " "+ passwd);
   };
 
   return (
@@ -17,14 +16,14 @@ function LoginForm({ addUser }) {
       <input
         type="text"
         placeholder="Login"
-        value={username}
-        onChange={(e) => setLogin(e.target.value)}
+        value={login}
+        onChange={(e) => returnLogin(e.target.value)}
       />
       <input
         type="password"
         placeholder="Haslo"
-        value={password}
-        onChange={(e) => setPasswd(e.target.value)}
+        value={passwd}
+        onChange={(e) => returnPasswd(e.target.value)}
       />
       <button type="submit">Login</button>
     </form>
