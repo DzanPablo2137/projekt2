@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
+import requests
 
 
 class NoteView(generics.ListAPIView):
@@ -17,27 +18,19 @@ class UserView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class FindLogin(APIView)
+class FindLogin(APIView):
     def post(self, request):
-       
+        print(request.data)
         user_login = request.data.get('login')
-        user_login = request.data.get('passwd')
-        print(note_text, user_login)
+        user_passwd = request.data.get('passwd')
+        print(user_login, user_passwd)
         try:
-            user_id = User.objects.get(username=user_login, passwd=password).id
+            user_id = User.objects.get(username=user_login, password=user_passwd).id
         except User.DoesNotExist:
             print({'error': 'Nieprawidłowy login lub hasło'})
-        print(note_text, user_id)
-        try:
-            owner = User.objects.get(id=user_id)
-            Note.objects.create(
-                note_text=note_text,
-                pub_date=timezone.now(),
-                owner=owner
-            )
-            print({'message': 'Znaleziono użytkownika!'}, status=status.HTTP_201_CREATED)
-        except User.DoesNotExist:
-            print({'error': 'User not found'})
+        print(user_login,user_passwd)
+        return Response({'message': 'Dziala!'})
+        
 
 class CreateNoteView(APIView):
     def post(self, request):

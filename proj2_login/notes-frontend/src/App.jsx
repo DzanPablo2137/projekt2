@@ -5,6 +5,7 @@ import NoteForm from './note/NoteForm';
 import NoteList from './note/NoteList';
 import axios from "axios";
 
+
 export const API_URL = "http://localhost:8000/api/";
 
 function App() {
@@ -36,14 +37,7 @@ function App() {
     }
   };
 
-  const findLogin = async (wysylanie) => {
-    try {
-      const odpowiedz = await axios.post(API_URL + 'findLogin', wysylanie);
-      console.log('User added successfully:', odpowiedz.data);
-    } catch (error) {
-      console.error('Error adding user:', error);
-    }
-  };
+  
 
   const addNote = async (noteData) => {
     try {

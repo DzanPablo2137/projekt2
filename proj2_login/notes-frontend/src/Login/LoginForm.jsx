@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 function LoginForm() {
   const [login, setLogin] = useState('');
   const [passwd, setPasswd] = useState('');
@@ -6,11 +7,18 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!login || !passwd) return;
-    loginUser({ username, password });
-    const wyslanie = axios.post(apiUrl + 'FindLogin');
+    FindLogin({ login, passwd });
     console.log(login+ " "+ passwd);
   }; 
 
+  const FindLogin = async (wysylanie) => {
+    try {
+      const odpowiedz = await axios.post('http://127.0.0.1:8000/api/' + 'FindLogin', wysylanie);
+      console.log('User added successfully:', odpowiedz.data);
+    } catch (error) {
+      console.error('Error adding user:', error);
+  };
+  }
   return (
     <form onSubmit={handleSubmit}>
       <input
