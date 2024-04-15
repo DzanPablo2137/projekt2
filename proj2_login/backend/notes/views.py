@@ -17,6 +17,9 @@ class UserView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class FindLogin()
+
+
 class CreateNoteView(APIView):
     def post(self, request):
         note_text = request.data.get('note_text')

@@ -9,8 +9,6 @@ export const API_URL = "http://localhost:8000/api/";
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [login, returnLogin] = useState('');
-  const [passwd, returnPasswd] = useState('');
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -52,7 +50,7 @@ function App() {
   return (
     <div>
       <h1>Logowanie</h1>
-      <LoginForm login={login} passwd={passwd} returnPasswd={returnPasswd} returnLogin={returnLogin}/>
+      <LoginForm/>
       <h1>Add User</h1>
       <UserForm addUser={addUser} />
       <h1>Add Note</h1>
