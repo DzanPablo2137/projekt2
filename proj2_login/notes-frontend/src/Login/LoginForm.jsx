@@ -7,8 +7,9 @@ function LoginForm() {
     e.preventDefault();
     if (!login || !passwd) return;
     loginUser({ username, password });
+    const wyslanie = axios.post(apiUrl + 'FindLogin');
     console.log(login+ " "+ passwd);
-  };
+  }; 
 
   return (
     <form onSubmit={handleSubmit}>

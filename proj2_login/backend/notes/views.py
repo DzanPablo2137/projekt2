@@ -17,8 +17,27 @@ class UserView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class FindLogin()
-
+class FindLogin(APIView)
+    def post(self, request):
+       
+        user_login = request.data.get('login')
+        user_login = request.data.get('passwd')
+        print(note_text, user_login)
+        try:
+            user_id = User.objects.get(username=user_login, passwd=password).id
+        except User.DoesNotExist:
+            print({'error': 'Nieprawidłowy login lub hasło'})
+        print(note_text, user_id)
+        try:
+            owner = User.objects.get(id=user_id)
+            Note.objects.create(
+                note_text=note_text,
+                pub_date=timezone.now(),
+                owner=owner
+            )
+            print({'message': 'Znaleziono użytkownika!'}, status=status.HTTP_201_CREATED)
+        except User.DoesNotExist:
+            print({'error': 'User not found'})
 
 class CreateNoteView(APIView):
     def post(self, request):
