@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
 import requests
+import uuid
 
 
 class NoteView(generics.ListAPIView):
@@ -29,7 +30,10 @@ class FindLogin(APIView):
         except User.DoesNotExist:
             print({'error': 'Nieprawidłowy login lub hasło'})
         print(user_login,user_passwd)
-        return Response({'message': 'Dziala!'})
+
+        token = uuid.uuid4().hex 
+
+        return Response({'message': 'Dziala!','token': token})
         
 
 class CreateNoteView(APIView):
