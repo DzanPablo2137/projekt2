@@ -9,6 +9,7 @@ from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
 import requests
 import uuid
+from .models import LoginToken
 
 
 class NoteView(generics.ListAPIView):
@@ -32,6 +33,14 @@ class FindLogin(APIView):
         print(user_login,user_passwd)
 
         token = uuid.uuid4().hex 
+       
+        user = user.objects.get(id=user_id)
+        LoginToken.objects.create(
+            user=user,
+            token=token,
+        )
+    
+
 
         return Response({'message': 'Dziala!','token': token})
         
