@@ -3,7 +3,7 @@ from .models import Note, User, LoginToken
 
 
 
-class LoginSerializer(serializers.ModelSerializer):
+class LoginTokenSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = LoginToken
