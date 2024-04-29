@@ -10,7 +10,6 @@ from .models import Note, User
 import requests
 import uuid
 
-
 class NoteView(generics.ListAPIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
