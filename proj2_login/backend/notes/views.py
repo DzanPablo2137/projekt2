@@ -9,6 +9,7 @@ from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
 import requests
 import uuid
+from .models import LoginToken
 
 class NoteView(generics.ListAPIView):
     queryset = Note.objects.all()
@@ -31,30 +32,36 @@ class FindLogin(APIView):
         print(user_login,user_passwd)
 
         token = uuid.uuid4().hex 
-
+       
+        user = User.objects.get(id=user_id)
+        LoginToken.objects.create(
+            user=user,
+            token=token,
+        )
+    
         return Response({'message': 'Dziala!','token': token})
         
 
 class CreateNoteView(APIView):
     def post(self, request):
         note_text = request.data.get('note_text')
-        owner_username = request.data.get('owner')  # Owner is username
-        print(note_text, owner_username)
+        token = request.data.get('token')  # Owner is username
+        print(token, token)
         try:
-            owner_id = User.objects.get(username=owner_username).id
-        except User.DoesNotExist:
+            tokenObject = LoginToken.objects.get(token=token)
+        except LoginToken.DoesNotExist:
             return Response({'error': 'User not found'})
-        print(note_text, owner_id)
+        print(note_text, tokenObject)
         try:
-            owner = User.objects.get(id=owner_id)
             Note.objects.create(
                 note_text=note_text,
                 pub_date=timezone.now(),
-                owner=owner
+                owner=tokenObject.user
             )
             return Response({'message': 'Note created successfully'}, status=status.HTTP_201_CREATED)
         except User.DoesNotExist:
             return Response({'error': 'User not found'})
+
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
