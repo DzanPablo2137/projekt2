@@ -15,6 +15,10 @@ class NoteView(generics.ListAPIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
 
+    def get(self, request, *args, **kwargs):
+        token = request.query_params.get('token')
+        return super().get(request, *args, **kwargs)
+
 
 class UserView(generics.ListAPIView):
     queryset = User.objects.all()
@@ -28,8 +32,7 @@ class FindLogin(APIView):
         try:
             user = User.objects.get(username=user_login, password=user_passwd)
         except User.DoesNotExist:
-
-            return Response({'error': 'Nieprawidłowy login lub hasło'}, status=200)
+            return Response({'message': 'Nie dziala!'})
 
         try:
             login_token = LoginToken.objects.get(user=user)
@@ -53,13 +56,12 @@ class CreateNoteView(APIView):
         note_text = request.data.get('note_text')
         token = request.data.get('token')
         
-  
-        user_id = request.session.get('user_id')
-        if not user_id:
+        x = LoginToken.objects.get(token = token) 
+        user = x.user
+        if not user:
             return Response({'error': 'Użytkownik nie jest zalogowany'}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
-            user = User.objects.get(id=user_id)
             Note.objects.create(
                 note_text=note_text,
                 pub_date=timezone.now(),
