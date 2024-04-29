@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 
-function NoteForm({ addNote, apiUrl }) {
+function NoteForm({ addNote, apiUrl, token }) {
     const [text, setText] = useState('');
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState('');
-    const [token, setToken] = useState('');
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -21,25 +20,14 @@ function NoteForm({ addNote, apiUrl }) {
             }
         };
 
-        const fetchToken = async () => {
-            try {
-                const response = await axios.post(apiUrl + 'find-login', {
-                    login: 'username',
-                    passwd: 'password' 
-                });
-                setToken(response.data.token);
-            } catch (error) {
-                console.error('Error fetching token:', error);
-            }
-        };
-
         fetchUsers();
-        fetchToken();
-    }, []);
+    }, [apiUrl]); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!text || !selectedUser || !token) {
+        console.log('Text:', text);
+        console.log('Token:', token);
+        if (!text || !token) {
             console.error('Missing required data');
             return;
         }
@@ -47,11 +35,10 @@ function NoteForm({ addNote, apiUrl }) {
         try {
             const response = await axios.post(apiUrl + 'create-note', {
                 note_text: text,
-                token: token,
-                owner: selectedUser
+                token: token
             });
             console.log('Note added successfully:', response.data);
-            addNote()
+            addNote();
             setText('');
             setSelectedUser('');
         } catch (error) {
@@ -67,18 +54,9 @@ function NoteForm({ addNote, apiUrl }) {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             />
-            <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
-                <option value="">Select User</option>
-                {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                        {user.username}
-                    </option>
-                ))}
-            </select>
             <button type="submit">Add Note</button>
         </form>
     );
 }
 
 export default NoteForm;
-  
