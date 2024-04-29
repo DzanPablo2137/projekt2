@@ -28,6 +28,7 @@ class FindLogin(APIView):
         try:
             user = User.objects.get(username=user_login, password=user_passwd)
         except User.DoesNotExist:
+
             return Response({'error': 'Nieprawidłowy login lub hasło'}, status=200)
 
         try:
@@ -44,6 +45,7 @@ class FindLogin(APIView):
         request.session['user_id'] = user.id
 
         return Response({'message': 'Token utworzony pomyślnie', 'token': token})
+
 
 
 class CreateNoteView(APIView):
