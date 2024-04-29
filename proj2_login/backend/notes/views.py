@@ -28,7 +28,7 @@ class FindLogin(APIView):
         try:
             user_id = User.objects.get(username=user_login, password=user_passwd).id
         except User.DoesNotExist:
-            print({'error': 'Nieprawidłowy login lub hasło'})
+            return Response({'message': 'Nie dziala!'})
         print(user_login,user_passwd)
 
         token = uuid.uuid4().hex 
