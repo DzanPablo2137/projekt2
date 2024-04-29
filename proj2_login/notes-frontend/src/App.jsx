@@ -51,7 +51,7 @@ function App() {
  
 
   return (
-    <div>
+    <div id='front'>
       <h1>Logowanie</h1>
       <LoginForm/>
       <h1>Add User</h1>
