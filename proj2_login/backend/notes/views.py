@@ -1,3 +1,4 @@
+from django.contrib.sessions.models import Session
 from django.utils import timezone
 from django.shortcuts import render
 
@@ -6,61 +7,65 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import NoteSerializer, UserSerializer
-from .models import Note, User
-import requests
+from .models import Note, User, LoginToken
 import uuid
-from .models import LoginToken
+
 
 class NoteView(generics.ListAPIView):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
 
+
 class UserView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
 class FindLogin(APIView):
     def post(self, request):
-        print(request.data)
         user_login = request.data.get('login')
         user_passwd = request.data.get('passwd')
-        print(user_login, user_passwd)
         try:
-            user_id = User.objects.get(username=user_login, password=user_passwd).id
+            user = User.objects.get(username=user_login, password=user_passwd)
         except User.DoesNotExist:
-            print({'error': 'Nieprawidłowy login lub hasło'})
-        print(user_login,user_passwd)
+            return Response({'error': 'Nieprawidłowy login lub hasło'}, status=200)
 
-        token = uuid.uuid4().hex 
-       
-        user = User.objects.get(id=user_id)
-        LoginToken.objects.create(
-            user=user,
-            token=token,
-        )
-    
-        return Response({'message': 'Dziala!','token': token})
-        
+        try:
+            login_token = LoginToken.objects.get(user=user)
+            token = login_token.token
+        except LoginToken.DoesNotExist:
+            token = uuid.uuid4().hex
+            LoginToken.objects.create(
+                user=user,
+                token=token,
+            )
+            
+
+        request.session['user_id'] = user.id
+
+        return Response({'message': 'Token utworzony pomyślnie', 'token': token})
+
 
 class CreateNoteView(APIView):
     def post(self, request):
         note_text = request.data.get('note_text')
-        token = request.data.get('token')  # Owner is username
-        print(token, token)
+        token = request.data.get('token')
+        
+  
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return Response({'error': 'Użytkownik nie jest zalogowany'}, status=status.HTTP_401_UNAUTHORIZED)
+
         try:
-            tokenObject = LoginToken.objects.get(token=token)
-        except LoginToken.DoesNotExist:
-            return Response({'error': 'User not found'})
-        print(note_text, tokenObject)
-        try:
+            user = User.objects.get(id=user_id)
             Note.objects.create(
                 note_text=note_text,
                 pub_date=timezone.now(),
-                owner=tokenObject.user
+                owner=user
             )
-            return Response({'message': 'Note created successfully'}, status=status.HTTP_201_CREATED)
-        except User.DoesNotExist:
-            return Response({'error': 'User not found'})
+            return Response({'message': 'Notatka utworzona pomyślnie'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CreateUserView(generics.CreateAPIView):

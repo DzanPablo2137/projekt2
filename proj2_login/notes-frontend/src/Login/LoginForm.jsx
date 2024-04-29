@@ -14,7 +14,7 @@ function LoginForm() {
 
   const FindLogin = async (wysylanie) => {
     try {
-      const odpowiedz = await axios.post('http://127.0.0.1:8000/api/' + 'FindLogin', wysylanie);
+      const odpowiedz = await axios.post('http://localhost:8000/api/find-login', wysylanie);
       setToken(odpowiedz.data.token);
       console.log(token);
       console.log('User added successfully:', odpowiedz.data);
